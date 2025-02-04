@@ -19,7 +19,12 @@ typedef enum {
     GREEN
 } traffic_light_state_t;
 
+system_mode_t current_mode = MODE_TRAFFIC_LIGHT;
 traffic_light_state_t current_state = RED;
+
+bool timer_running = false;
+bool button_pressed = false;
+uint32_t last_button_press_time = 0;
 
 // Função de callback para o temporizador repetitivo
 bool repeating_timer_callback(struct repeating_timer *t) {
