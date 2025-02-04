@@ -49,6 +49,27 @@ bool repeating_timer_callback(struct repeating_timer *t) {
     return true; // Continuar repetindo
 }
 
+// Função de callback para desligar o LED verde (modo alarme)
+bool turn_off_green_callback(alarm_id_t id, void *user_data) {
+    gpio_put(GREEN_LED_PIN, 0);
+    timer_running = false;
+    return false; // Não repetir
+}
+
+// Função de callback para desligar o LED vermelho (modo alarme)
+bool turn_off_red_callback(alarm_id_t id, void *user_data) {
+    gpio_put(RED_LED_PIN, 0);
+    add_alarm_in_ms(3000, turn_off_green_callback, NULL, false);
+    return false; // Não repetir
+}
+
+// Função de callback para desligar o LED azul (modo alarme)
+bool turn_off_blue_callback(alarm_id_t id, void *user_data) {
+    gpio_put(YELLOW_LED_PIN, 0);
+    add_alarm_in_ms(3000, turn_off_red_callback, NULL, false);
+    return false; // Não repetir
+}
+
 int main() {
     stdio_init_all();
 
