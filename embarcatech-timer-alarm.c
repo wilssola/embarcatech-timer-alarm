@@ -115,7 +115,7 @@ int main() {
                 gpio_put(GREEN_LED_PIN, 0);
                 current_state = RED;
                 timer_running = false;
-            } else {
+            } else if (!timer_running) {
                 // Clique único, alternar para o modo alarme
                 current_mode = MODE_ALARM;
                 gpio_put(RED_LED_PIN, 1);
