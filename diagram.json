@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "author": "Wilson Oliveira Lima",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-pi-pico",
+      "id": "pico",
+      "top": 20,
+      "left": 60,
+      "attrs": { "env": "arduino-community" }
+    },
+    { "type": "wokwi-led", "id": "led1", "top": -61.2, "left": 13.4, "attrs": { "color": "red" } },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 15.6,
+      "left": -34.6,
+      "attrs": { "color": "yellow" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 73.2,
+      "left": -82.6,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 282.35,
+      "left": -9.6,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 187.2,
+      "left": -19.75,
+      "rotate": 90,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r3",
+      "top": 273.6,
+      "left": -86.95,
+      "rotate": 90,
+      "attrs": { "value": "1000" }
+    }
+  ],
+  "connections": [
+    [ "pico:GND.1", "led1:C", "black", [] ],
+    [ "pico:GND.2", "led2:C", "black", [] ],
+    [ "pico:GND.3", "led3:C", "black", [] ],
+    [ "$serialMonitor:RX", "pico:GP0", "", [] ],
+    [ "led3:A", "r3:1", "green", [ "v0" ] ],
+    [ "led1:A", "r2:1", "green", [ "v134.4", "h-37.85" ] ],
+    [ "r3:2", "pico:GP13", "green", [ "v18", "h123.6" ] ],
+    [ "r1:2", "pico:GP12", "green", [ "h27.6", "v-111.25" ] ],
+    [ "r2:2", "pico:GP11", "green", [ "h28.25", "v-34.8" ] ],
+    [ "r1:1", "led2:A", "green", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
