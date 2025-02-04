@@ -6,6 +6,9 @@
 #define YELLOW_LED_PIN 12
 #define GREEN_LED_PIN 13
 
+// Definir pino GPIO para o botão
+#define BUTTON_PIN 5
+
 // Enum para representar os modos do sistema
 typedef enum {
     MODE_TRAFFIC_LIGHT,
@@ -68,6 +71,19 @@ bool turn_off_blue_callback(alarm_id_t id, void *user_data) {
     gpio_put(YELLOW_LED_PIN, 0);
     add_alarm_in_ms(3000, turn_off_red_callback, NULL, false);
     return false; // Não repetir
+}
+
+// Função para verificar o estado do botão com debounce
+bool is_button_pressed() {
+    static uint32_t last_press_time = 0;
+    uint32_t current_time = to_ms_since_boot(get_absolute_time());
+    if (gpio_get(BUTTON_PIN) == 0) {
+        if (current_time - last_press_time > 200) { // Debounce de 200ms
+            last_press_time = current_time;
+            return true;
+        }
+    }
+    return false;
 }
 
 int main() {
