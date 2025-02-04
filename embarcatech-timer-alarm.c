@@ -6,6 +6,12 @@
 #define YELLOW_LED_PIN 12
 #define GREEN_LED_PIN 13
 
+// Enum para representar os modos do sistema
+typedef enum {
+    MODE_TRAFFIC_LIGHT,
+    MODE_ALARM
+} system_mode_t;
+
 // Enum para representar os estados do semáforo
 typedef enum {
     RED,
