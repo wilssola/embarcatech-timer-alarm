@@ -53,24 +53,24 @@ bool repeating_timer_callback(struct repeating_timer *t) {
 }
 
 // Função de callback para desligar o LED verde (modo alarme)
-bool turn_off_green_callback(alarm_id_t id, void *user_data) {
+int64_t turn_off_green_callback(alarm_id_t id, void *user_data) {
     gpio_put(GREEN_LED_PIN, 0);
     timer_running = false;
-    return false; // Não repetir
+    return 0; // Não repetir
 }
 
 // Função de callback para desligar o LED vermelho (modo alarme)
-bool turn_off_red_callback(alarm_id_t id, void *user_data) {
+int64_t turn_off_red_callback(alarm_id_t id, void *user_data) {
     gpio_put(RED_LED_PIN, 0);
     add_alarm_in_ms(3000, turn_off_green_callback, NULL, false);
-    return false; // Não repetir
+    return 0; // Não repetir
 }
 
 // Função de callback para desligar o LED azul (modo alarme)
-bool turn_off_blue_callback(alarm_id_t id, void *user_data) {
+int64_t turn_off_blue_callback(alarm_id_t id, void *user_data) {
     gpio_put(YELLOW_LED_PIN, 0);
     add_alarm_in_ms(3000, turn_off_red_callback, NULL, false);
-    return false; // Não repetir
+    return 0; // Não repetir
 }
 
 // Função para verificar o estado do botão com debounce
@@ -96,16 +96,43 @@ int main() {
     gpio_set_dir(YELLOW_LED_PIN, GPIO_OUT);
     gpio_init(GREEN_LED_PIN);
     gpio_set_dir(GREEN_LED_PIN, GPIO_OUT);
+    gpio_init(BUTTON_PIN);
+    gpio_set_dir(BUTTON_PIN, GPIO_IN);
+    gpio_pull_up(BUTTON_PIN);
 
-    // Ligar o LED vermelho inicialmente
-    gpio_put(RED_LED_PIN, 1);
-
-    // Adicionar temporizador repetitivo
+    // Inicializar temporizador repetitivo para o modo semáforo
     struct repeating_timer timer;
     add_repeating_timer_ms(3000, repeating_timer_callback, NULL, &timer);
 
     while (true) {
-        printf("Sistema de semáforo em execução...\n");
-        sleep_ms(1000);
+        if (is_button_pressed()) {
+            uint32_t current_time = to_ms_since_boot(get_absolute_time());
+            if (current_time - last_button_press_time < 500) {
+                // Duplo clique, alternar para o modo semáforo
+                current_mode = MODE_TRAFFIC_LIGHT;
+                gpio_put(RED_LED_PIN, 1);
+                gpio_put(YELLOW_LED_PIN, 0);
+                gpio_put(GREEN_LED_PIN, 0);
+                current_state = RED;
+                timer_running = false;
+            } else {
+                // Clique único, alternar para o modo alarme
+                current_mode = MODE_ALARM;
+                gpio_put(RED_LED_PIN, 1);
+                gpio_put(YELLOW_LED_PIN, 1);
+                gpio_put(GREEN_LED_PIN, 1);
+                timer_running = true;
+                add_alarm_in_ms(3000, turn_off_blue_callback, NULL, false);
+            }
+            last_button_press_time = current_time;
+        }
+
+        if (current_mode == MODE_TRAFFIC_LIGHT) {
+            printf("Modo semáforo em execução...\n");
+        } else if (current_mode == MODE_ALARM) {
+            printf("Modo alarme em execução...\n");
+        }
+
+        sleep_ms(100);
     }
 }
