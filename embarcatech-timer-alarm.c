@@ -66,8 +66,8 @@ int64_t turn_off_red_callback(alarm_id_t id, void *user_data) {
     return 0; // Não repetir
 }
 
-// Função de callback para desligar o LED azul (modo alarme)
-int64_t turn_off_blue_callback(alarm_id_t id, void *user_data) {
+// Função de callback para desligar o LED amarelo (modo alarme)
+int64_t turn_off_yellow_callback(alarm_id_t id, void *user_data) {
     gpio_put(YELLOW_LED_PIN, 0);
     add_alarm_in_ms(3000, turn_off_red_callback, NULL, false);
     return 0; // Não repetir
@@ -122,7 +122,7 @@ int main() {
                 gpio_put(YELLOW_LED_PIN, 1);
                 gpio_put(GREEN_LED_PIN, 1);
                 timer_running = true;
-                add_alarm_in_ms(3000, turn_off_blue_callback, NULL, false);
+                add_alarm_in_ms(3000, turn_off_yellow_callback, NULL, false);
             }
             last_button_press_time = current_time;
         }
